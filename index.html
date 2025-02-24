@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タスク管理アプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #f4f4f4;
+            padding: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li.completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .priority {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>タスク管理アプリ</h2>
+    <input type="number" id="priorityInput" placeholder="優先順位 (1-10)" min="1" max="10">
+    <input type="text" id="taskInput" placeholder="タスクを入力">
+    <button onclick="addTask()">追加</button>
+    <ul id="taskList"></ul>
+
+    <script>
+        function addTask() {
+            const taskInput = document.getElementById("taskInput");
+            const priorityInput = document.getElementById("priorityInput");
+
+            const taskText = taskInput.value.trim();
+            const priorityValue = parseInt(priorityInput.value, 10);
+
+            if (taskText === "" || isNaN(priorityValue)) return;
+
+            const li = document.createElement("li");
+            li.dataset.priority = priorityValue; // 優先順位をデータ属性に保存
+
+            // 優先順位表示
+            const prioritySpan = document.createElement("span");
+            prioritySpan.textContent = priorityValue;
+            prioritySpan.className = "priority";
+
+            // タスク名
+            const taskSpan = document.createElement("span");
+            taskSpan.textContent = taskText;
+
+            // タスク完了機能
+            taskSpan.addEventListener("click", function() {
+                li.classList.toggle("completed");
+            });
+
+            // 削除ボタン
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "削除";
+            deleteBtn.className = "delete-btn";
+            deleteBtn.onclick = function() {
+                li.remove();
+            };
+
+            // タスク要素を作成
+            li.appendChild(prioritySpan);
+            li.appendChild(taskSpan);
+            li.appendChild(deleteBtn);
+
+            // タスクをリストに追加
+            document.getElementById("taskList").appendChild(li);
+
+            // タスクを並び替え
+            sortTasks();
+
+            // 入力欄をクリア
+            taskInput.value = "";
+            priorityInput.value = "";
+        }
+
+        function sortTasks() {
+            const taskList = document.getElementById("taskList");
+            const tasks = Array.from(taskList.children);
+
+            // 優先順位（昇順）でソート
+            tasks.sort((a, b) => a.dataset.priority - b.dataset.priority);
+
+            // 並び替えた順にリストへ追加
+            tasks.forEach(task => taskList.appendChild(task));
+        }
+    </script>
+
+</body>
+</html>
